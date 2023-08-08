@@ -14,7 +14,6 @@ channel = Channel.current()
 
 channel.meta['author'] = ['Red_lnn']
 channel.meta['name'] = 'Bot版本与系统运行情况查询'
-channel.meta['description'] = '[!！.](status|version)'
 
 extra, official, community = get_graia_version()
 
@@ -70,8 +69,10 @@ async def main(ctx: Context, event: MessageReceived):
         md += ''.join(f'  - {name}：{version}\n' for name, version in community)
 
     for _ in [{'name': 'Avilla', 'prefix': 'avilla'}, {'name': 'None', 'prefix': 'none'}]:
-        md += f'- {_["name"]} 相关:\n'
         packages = get_version(_['prefix'])
+        if len(packages) == 0:
+            continue
+        md += f'- {_["name"]} 相关:\n'
         md += ''.join(f'  - {name}：{version}\n' for name, version in packages)
 
     await ctx.scene.send_message([Markdown(md)])
