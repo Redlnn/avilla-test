@@ -16,19 +16,20 @@ from graia.saya import Saya
 from launart import Launart
 from loguru import logger
 
-from libs.database.service import DatabaseService
-
 # from yarl import URL
+from libs.aiohttp_service import AiohttpClientService
+from libs.database.service import DatabaseService
 from libs.path import modules_path
 from utils import loguru_exc_callback, loguru_exc_callback_async, loguru_handler
 
 loop = create(AbstractEventLoop)
 broadcast = create(Broadcast)
 saya = create(Saya)
-launart = Launart()
+launart = create(Launart)
 avilla = Avilla(broadcast=broadcast, launch_manager=launart, message_cache_size=0)
 
 launart.add_component(DatabaseService())
+launart.add_component(AiohttpClientService())
 
 # red_protocol = RedProtocol()
 # conn = RedWsClientNetworking(
@@ -60,8 +61,8 @@ for name in logging.root.manager.loggerDict:
         if isinstance(handler, logging.StreamHandler):
             _logger.removeHandler(handler)
 
-# logger.remove()
-# logger.add(sys.stderr, level="INFO", enqueue=True)
+logger.remove()
+logger.add(sys.stderr, level="INFO", enqueue=True)
 
 loop.set_exception_handler(loguru_exc_callback_async)
 traceback.print_exception = loguru_exc_callback
