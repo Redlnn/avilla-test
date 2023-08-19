@@ -24,6 +24,7 @@ from typing import Literal
 from avilla.core import Context, MessageReceived
 from avilla.core.elements import Picture, Text
 from avilla.core.resource import RawResource
+from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
 from graiax.shortcut.saya import listen
 from graiax.text2img.playwright import PageOption
@@ -79,14 +80,14 @@ class VideoInfo:
 
 
 @listen(MessageReceived)
-async def main(ctx: Context, event: MessageReceived):
-    message = str(event.message.content)
+async def main(ctx: Context, message: MessageChain):
+    msg = "".join([str(dir(element)) for element in message.content])
     p = re.compile(f'({avid_re})|({bvid_re})')
-    if 'b23.tv/' in message:
-        message = await b23_url_extract(message)
-        if not message:
+    if 'b23.tv/' in msg:
+        msg = await b23_url_extract(msg)
+        if not msg:
             return
-    video_id = p.search(message)
+    video_id = p.search(msg)
     if not video_id or video_id is None:
         return
     video_id = video_id.group()
