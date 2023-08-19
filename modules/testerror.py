@@ -1,11 +1,11 @@
 from avilla.core import Context, MessageReceived
 from graia.saya import Channel
-from graia.saya.builtins.broadcast.schema import ListenerSchema
+from graiax.shortcut.saya import listen
 
 channel = Channel.current()
 
 
-@channel.use(ListenerSchema(listening_events=[MessageReceived]))
+@listen(MessageReceived)
 async def main(ctx: Context, event: MessageReceived):
     if str(event.message.content) != '/testerror':
         return

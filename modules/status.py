@@ -6,7 +6,7 @@ import psutil
 from avilla.console.element import Markdown
 from avilla.core import Context, MessageReceived
 from graia.saya import Channel
-from graia.saya.builtins.broadcast.schema import ListenerSchema
+from graiax.shortcut.saya import listen
 
 from libs import get_graia_version, get_version
 
@@ -26,7 +26,7 @@ total_memory = '%.1f' % (psutil.virtual_memory().total / 1073741824)
 pid = os.getpid()
 
 
-@channel.use(ListenerSchema(listening_events=[MessageReceived]))
+@listen(MessageReceived)
 async def main(ctx: Context, event: MessageReceived):
     if str(event.message.content) != '/status':
         return

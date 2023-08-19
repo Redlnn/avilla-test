@@ -1,6 +1,7 @@
 from avilla.core import Context, MessageReceived
 from graia.saya import Channel
 from graia.saya.builtins.broadcast.schema import ListenerSchema
+from graiax.shortcut.saya import listen
 from launart import Launart
 from loguru import logger
 from sqlalchemy.sql import select
@@ -12,7 +13,7 @@ from .model import Test
 channel = Channel.current()
 
 
-@channel.use(ListenerSchema(listening_events=[MessageReceived]))
+@listen(MessageReceived)
 async def main(ctx: Context, event: MessageReceived):
     if str(event.message.content) != '/testdb':
         return
