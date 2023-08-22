@@ -13,6 +13,8 @@
  - av2
 """
 
+
+import contextlib
 import re
 import time
 from base64 import b64encode
@@ -81,13 +83,23 @@ class VideoInfo:
 
 @listen(MessageReceived)
 async def main(ctx: Context, message: MessageChain):
-    msg = "".join([str(dir(element)) for element in message.content])
+    msg = ''
+    for element in message.content:
+        for attr in dir(element):
+            if attr.startswith('_'):
+                continue
+            if x := getattr(element, attr):
+                with contextlib.suppress(Exception):
+                    msg += str(x)
+
+    msg = msg.replace(r'\/', '/')
     p = re.compile(f'({avid_re})|({bvid_re})')
     if 'b23.tv/' in msg:
         msg = await b23_url_extract(msg)
         if not msg:
             return
     video_id = p.search(msg)
+    logger.warning(video_id)
     if not video_id or video_id is None:
         return
     video_id = video_id.group()
@@ -179,9 +191,6 @@ def math(num: int):
         return ('%.2f' % (num / 100000000)) + '亿'
 
 
-template = Path(root_path, 'static', 'jinja2_templates', 'bili_video.html').read_text(encoding='utf-8')
-
-
 async def gen_img(data: VideoInfo) -> bytes:
     video_length_m, video_length_s = divmod(data.duration, 60)  # 将总的秒数转换为时分秒格式
     video_length_h, video_length_m = divmod(video_length_m, 60)
@@ -212,7 +221,7 @@ async def gen_img(data: VideoInfo) -> bytes:
         qrcode_src = f'data:image/png;base64,{base64_str}'
 
     return await template2img(
-        template,
+        (Path(__file__).parent / 'template.html').read_text(encoding='utf-8'),
         {
             'cover_src': data.cover_url,
             'duration': video_length,

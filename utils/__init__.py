@@ -3,7 +3,11 @@ import sys
 import traceback
 from types import TracebackType
 
-from graia.broadcast.exceptions import ExecutionStop, PropagationCancelled, RequirementCrashed
+from graia.broadcast.exceptions import (
+    ExecutionStop,
+    PropagationCancelled,
+    RequirementCrashed,
+)
 from loguru import logger
 
 
