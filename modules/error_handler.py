@@ -1,7 +1,7 @@
 import traceback
 from io import StringIO
 
-from avilla.core import Avilla
+from avilla.core.application import Avilla
 from avilla.core.elements import Picture, Text
 from avilla.core.resource import RawResource
 from avilla.core.selector import Selector

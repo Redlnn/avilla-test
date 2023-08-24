@@ -99,7 +99,6 @@ async def main(ctx: Context, message: MessageChain):
         if not msg:
             return
     video_id = p.search(msg)
-    logger.warning(video_id)
     if not video_id or video_id is None:
         return
     video_id = video_id.group()

@@ -70,7 +70,6 @@ async def main(ctx: Context, event: MessageReceived):
                     ip = dns_res
         else:
             return
-        logger.success(f'{ip}:{port}')
         port = int(port) if port is not None else 25565
         try:
             ping_result = await ping(ip, port)

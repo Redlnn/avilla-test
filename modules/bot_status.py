@@ -3,17 +3,22 @@ import platform
 import time
 
 import psutil
-from avilla.console.element import Markdown
 from avilla.core import Context, MessageReceived
+from avilla.core.elements import Picture
+from avilla.core.resource import RawResource
+from avilla.twilight.twilight import RegexMatch, Twilight
+from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
-from graiax.shortcut.saya import listen
+from graiax.shortcut.saya import decorate, dispatch, listen
 
 from libs import get_graia_version, get_version
+from libs.text2img import md2img
 
 channel = Channel.current()
 
 channel.meta['author'] = ['Red_lnn']
 channel.meta['name'] = 'Bot版本与系统运行情况查询'
+channel.meta['description'] = '[!！.](status|version)'
 
 extra, official, community = get_graia_version()
 
@@ -27,11 +32,9 @@ pid = os.getpid()
 
 
 @listen(MessageReceived)
-async def main(ctx: Context, event: MessageReceived):
-    if str(event.message.content) != '/status':
-        return
-    await ctx.scene.send_message('loading...')
-
+@dispatch(Twilight(RegexMatch(r'[!！.](status|version)')))
+# @decorate(GroupPermission.require())
+async def main(ctx: Context):
     p = psutil.Process(pid)
     started_time = time.localtime(p.create_time())
     running_time = time.time() - p.create_time()
@@ -75,4 +78,4 @@ async def main(ctx: Context, event: MessageReceived):
         md += f'- {_["name"]} 相关:\n'
         md += ''.join(f'  - {name}：{version}\n' for name, version in packages)
 
-    await ctx.scene.send_message([Markdown(md)])
+    await ctx.scene.send_message(MessageChain([Picture(RawResource(data=await md2img(md.rstrip())))]))

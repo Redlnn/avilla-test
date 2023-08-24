@@ -6,7 +6,7 @@ from asyncio import AbstractEventLoop
 
 import kayaku
 from avilla.console.protocol import ConsoleProtocol
-from avilla.core import Avilla
+from avilla.core.application import Avilla
 from avilla.elizabeth.connection.ws_client import (
     ElizabethWsClientConfig,
     ElizabethWsClientNetworking,
@@ -23,6 +23,10 @@ from launart import Launart
 from loguru import logger
 from yarl import URL
 
+kayaku.initialize({"{**}": "./config/{**}"})
+
+# ruff: noqa: E402
+
 from libs.aiohttp_service import AiohttpClientService
 from libs.config import BasicConfig
 from libs.database.service import DatabaseService
@@ -35,8 +39,6 @@ saya = create(Saya)
 launart = create(Launart)
 avilla = Avilla(broadcast=broadcast, launch_manager=launart, message_cache_size=0)
 
-kayaku.initialize({"{**}": "./config/{**}"})
-
 ignore = ('__init__.py', '__pycache__')
 with saya.module_context():
     for module in pkgutil.iter_modules([str(modules_path)]):
@@ -45,7 +47,7 @@ with saya.module_context():
         saya.require(f'modules.{module.name}')
 
 kayaku.bootstrap()
-basic_cfg = create(BasicConfig)
+basic_cfg = kayaku.create(BasicConfig)
 
 launart.add_component(PlaywrightService())
 launart.add_component(DatabaseService(basic_cfg.databaseUrl))
