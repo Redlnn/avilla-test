@@ -114,7 +114,7 @@ class PingClient:
         return status
 
 
-async def ping(host: str | None = None, port: int | None = None) -> dict:
+def ping(host: str | None = None, port: int | None = None) -> dict:
     if host is None:
         raise ValueError('host can not be empty')
     client = PingClient(host=host, port=port or 25565)
