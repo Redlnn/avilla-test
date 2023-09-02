@@ -5,6 +5,7 @@ from pathlib import Path
 from random import choice, randrange, uniform
 
 import kayaku
+from avilla.core.context import Context
 from avilla.core.elements import Picture, Text
 from avilla.core.exceptions import NetworkError, UnknownTarget
 from avilla.standard.core.activity import ActivityTrigger
@@ -52,14 +53,14 @@ async def get_message(event: ActivityTrigged):
 
 @listen(ActivityTrigged)
 # @decorate(require_disable(channel.module))
-async def main(event: ActivityTrigged):
+async def main(ctx: Context, event: ActivityTrigged):
     if not event.activity.follows('::group.member.activity(nudge).*'):
         return
-    ctx = event.context
-    sender = event.context.client
-    target = event.context.endpoint
-    # group = event.context.scene
-    # bot = event.context.self
+
+    sender = ctx.client
+    target = ctx.endpoint
+    # group = ctx.scene
+    # bot = ctx.self
 
     basic_cfg = kayaku.create(BasicConfig)
     if target['member'] != str(basic_cfg.miraiApiHttp.account):

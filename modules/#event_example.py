@@ -5,6 +5,9 @@ from graia.saya import Channel
 from graiax.shortcut.saya import listen
 from loguru import logger
 
+# for ruff
+# ruff: noqa: F841
+
 channel = Channel.current()
 
 
