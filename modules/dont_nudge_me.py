@@ -45,7 +45,7 @@ async def get_message(event: ActivityTrigged):
     if tmp < len(msg):
         return MessageChain([Text(msg[tmp].replace('{}', event.activity['nudge'][0]))])
     if not Path(data_path, 'Nudge').exists():
-        Path(data_path, 'Nudge').mkdir()
+        Path(data_path, 'Nudge').mkdir(parents=True)
     elif len(os.listdir(Path(data_path, 'Nudge'))) == 0:
         return MessageChain([Text(choice(msg).replace('{}', event.activity['nudge'][0]))])
     return MessageChain([Picture(Path(data_path, 'Nudge', os.listdir(Path(data_path, 'Nudge'))[tmp - len(msg)]))])
@@ -70,6 +70,6 @@ async def main(ctx: Context, event: ActivityTrigged):
     await asyncio.sleep(uniform(0.2, 0.6))
     with contextlib.suppress(UnknownTarget, NetworkError):
         await ctx[ActivityTrigger.trigger](sender.activity('nudge'))
-        await asyncio.sleep(uniform(0.2, 0.6))
-        if ctx.scene.follows('::group.*') or ctx.scene.follows('::friend.*'):
-            await ctx.scene.send_message(await get_message(event))
+    await asyncio.sleep(uniform(0.2, 0.6))
+    if ctx.scene.follows('::group.*') or ctx.scene.follows('::friend.*'):
+        await ctx.scene.send_message(await get_message(event))
