@@ -1,5 +1,4 @@
 from avilla.core import Context, MessageReceived
-from avilla.elizabeth.perform.event.activity import ElizabethEventActivityPerform
 from avilla.standard.core.activity.event import ActivityTrigged
 from graia.saya import Channel
 from graiax.shortcut.saya import listen
@@ -15,6 +14,10 @@ channel = Channel.current()
 @listen(MessageReceived)
 async def main1(ctx: Context, event: MessageReceived):
     logger.debug(event)
+    logger.debug(event.context.client)  # sender
+    logger.debug(event.context.endpoint)  # group
+    logger.debug(event.context.scene)  # group
+    logger.debug(event.context.self)  # bot
 
 
 @listen(ActivityTrigged)

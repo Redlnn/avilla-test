@@ -4,6 +4,7 @@ import sys
 import traceback
 from asyncio import AbstractEventLoop
 
+import creart
 import kayaku
 from avilla.console.protocol import ConsoleProtocol
 from avilla.core.application import Avilla
@@ -12,16 +13,15 @@ from avilla.elizabeth.connection.ws_client import (
     ElizabethWsClientNetworking,
 )
 from avilla.elizabeth.protocol import ElizabethProtocol
-
-# from avilla.red.net.ws_client import RedWsClientConfig, RedWsClientNetworking
-# from avilla.red.protocol import RedProtocol
-from creart import create
 from graia.broadcast import Broadcast
 from graia.saya import Saya
 from graiax.playwright.service import PlaywrightService
 from launart import Launart
 from loguru import logger
 from yarl import URL
+
+# from avilla.red.net.ws_client import RedWsClientConfig, RedWsClientNetworking
+# from avilla.red.protocol import RedProtocol
 
 kayaku.initialize({"{**}": "./config/{**}"})
 
@@ -33,10 +33,10 @@ from libs.database.service import DatabaseService
 from libs.path import modules_path
 from utils import loguru_exc_callback, loguru_exc_callback_async, loguru_handler
 
-loop = create(AbstractEventLoop)
-broadcast = create(Broadcast)
-saya = create(Saya)
-launart = create(Launart)
+loop = creart.create(AbstractEventLoop)
+broadcast = creart.create(Broadcast)
+saya = creart.create(Saya)
+launart = creart.create(Launart)
 avilla = Avilla(broadcast=broadcast, launch_manager=launart, message_cache_size=0)
 
 ignore = ('__init__.py', '__pycache__')
@@ -86,7 +86,7 @@ for name in logging.root.manager.loggerDict:
             _logger.removeHandler(handler)
 
 logger.remove()
-logger.add(sys.stderr, level="INFO", enqueue=True)
+logger.add(sys.stderr, level="DEBUG", enqueue=True)
 
 loop.set_exception_handler(loguru_exc_callback_async)
 traceback.print_exception = loguru_exc_callback

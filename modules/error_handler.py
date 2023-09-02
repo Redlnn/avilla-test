@@ -1,6 +1,7 @@
 import traceback
 from io import StringIO
 
+import kayaku
 from avilla.core.application import Avilla
 from avilla.core.elements import Picture, Text
 from avilla.core.resource import RawResource
@@ -10,15 +11,11 @@ from graia.amnesia.message.chain import MessageChain
 from graia.broadcast.builtin.event import ExceptionThrowed
 from graia.saya import Channel
 from graiax.shortcut.saya import listen
-from kayaku import create
 
 from libs.config import BasicConfig
 from libs.text2img import md2img
 
 channel = Channel.current()
-channel.meta['can_disable'] = False
-
-basic_cfg = create(BasicConfig)
 
 
 @listen(ExceptionThrowed)
@@ -55,6 +52,7 @@ async def except_handle(event: ExceptionThrowed):
     )
     if account is None:
         return
+    basic_cfg = kayaku.create(BasicConfig, flush=True)
     await account.staff.call_fn(
         MessageSend.send,
         Selector().land('qq').friend(str(basic_cfg.admin.masterId)),

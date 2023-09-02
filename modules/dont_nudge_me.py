@@ -21,7 +21,7 @@ channel = Channel.current()
 
 channel.meta['name'] = '别戳我'
 channel.meta['author'] = ['Red_lnn']
-channel.meta['description'] = '戳一戳bot'
+channel.meta['description'] = '不要戳 Bot！（仅支持 QQ 平台）'
 
 msg = (
     '别{}啦别{}啦，无论你再怎么{}，我也不会多说一句话的~',
@@ -62,7 +62,7 @@ async def main(ctx: Context, event: ActivityTrigged):
     # group = ctx.scene
     # bot = ctx.self
 
-    basic_cfg = kayaku.create(BasicConfig)
+    basic_cfg = kayaku.create(BasicConfig, flush=True)
     if target['member'] != str(basic_cfg.miraiApiHttp.account):
         return
     # elif not ManualInterval.require(f'{event.supplicant}_{event.target}', 3):
