@@ -49,12 +49,10 @@ async def except_handle(event: ExceptionThrowed):
 '''
     img_bytes = await md2img(msg, 1500)
     message = MessageChain([Text('发生异常\n'), Picture(RawResource(img_bytes))])
-    account = None
-    for k, v in Avilla.current().accounts.items():
-        if k.pattern['land'] == 'qq':
-            account = v.account
-        else:
-            continue
+    account = next(
+        (v.account for k, v in Avilla.current().accounts.items() if k.pattern['land'] == 'qq'),
+        None,
+    )
     if account is None:
         return
     await account.staff.call_fn(
