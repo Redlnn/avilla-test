@@ -14,10 +14,10 @@ channel = Channel.current()
 @listen(MessageReceived)
 async def main1(ctx: Context, event: MessageReceived):
     logger.debug(event)
-    logger.debug(event.context.client)  # sender
-    logger.debug(event.context.endpoint)  # group
-    logger.debug(event.context.scene)  # group
-    logger.debug(event.context.self)  # bot
+    logger.debug(ctx.client)  # sender (member / friend )
+    logger.debug(ctx.endpoint)  # group / friend
+    logger.debug(ctx.scene)  # group / friend
+    logger.debug(ctx.self)  # bot
 
 
 @listen(ActivityTrigged)
@@ -28,10 +28,10 @@ async def main2(event: ActivityTrigged):
     # NudgeEvent 戳一戳消息
     if event.id == 'nudge':
         logger.debug(event.id)  # "nudge"
-        logger.debug(event.scene)  # == event.context.scene  所在群组/好友
-        logger.debug(event.activity)  # == event.context.client.nudge(raw_event["action"])  动作
-        logger.debug(event.trigger)  # == event.context.client  发送者
-        logger.debug(event.context.client)  # sender
-        logger.debug(event.context.endpoint)  # target
-        logger.debug(event.context.scene)  # group
-        logger.debug(event.context.self)  # bot
+        logger.debug(event.scene)  # == ctx.scene  所在群组/好友
+        logger.debug(event.activity)  # == ctx.client.nudge(raw_event["action"])  动作
+        logger.debug(event.trigger)  # == ctx.client  发送者
+        logger.debug(ctx.client)  # sender (group / friend)
+        logger.debug(ctx.endpoint)  # target
+        logger.debug(ctx.scene)  # group / friend
+        logger.debug(ctx.self)  # bot
