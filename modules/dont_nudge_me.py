@@ -43,18 +43,18 @@ msg = (
 async def get_message(event: ActivityTrigged):
     tmp = randrange(0, len(os.listdir(Path(data_path, 'Nudge'))) + len(msg))
     if tmp < len(msg):
-        return MessageChain([Text(msg[tmp].replace('{}', event.activity['action'][0]))])
+        return MessageChain([Text(msg[tmp].replace('{}', event.activity['nudge'][0]))])
     if not Path(data_path, 'Nudge').exists():
         Path(data_path, 'Nudge').mkdir()
     elif len(os.listdir(Path(data_path, 'Nudge'))) == 0:
-        return MessageChain([Text(choice(msg).replace('{}', event.activity['action'][0]))])
+        return MessageChain([Text(choice(msg).replace('{}', event.activity['nudge'][0]))])
     return MessageChain([Picture(Path(data_path, 'Nudge', os.listdir(Path(data_path, 'Nudge'))[tmp - len(msg)]))])
 
 
 @listen(ActivityTrigged)
 # @decorate(require_disable(channel.module))
 async def main(ctx: Context, event: ActivityTrigged):
-    if not event.activity.follows('::group.member.activity(nudge).*'):
+    if event.id != 'nudge':
         return
 
     sender = ctx.client
@@ -71,5 +71,5 @@ async def main(ctx: Context, event: ActivityTrigged):
     with contextlib.suppress(UnknownTarget, NetworkError):
         await ctx[ActivityTrigger.trigger](sender.activity('nudge'))
         await asyncio.sleep(uniform(0.2, 0.6))
-        if event.activity.follows('::group.*') or event.activity.follows('::friend.*'):
+        if ctx.scene.follows('::group.*') or ctx.scene.follows('::friend.*'):
             await ctx.scene.send_message(await get_message(event))

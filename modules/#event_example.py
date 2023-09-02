@@ -26,7 +26,11 @@ async def main2(event: ActivityTrigged):
     logger.debug(event)
 
     # NudgeEvent 戳一戳消息
-    if event.activity.follows('::group.member.activity(nudge).*'):
+    if event.id == 'nudge':
+        logger.debug(event.id)  # "nudge"
+        logger.debug(event.scene)  # == event.context.scene  所在群组/好友
+        logger.debug(event.activity)  # == event.context.client.nudge(raw_event["action"])  动作
+        logger.debug(event.trigger)  # == event.context.client  发送者
         logger.debug(event.context.client)  # sender
         logger.debug(event.context.endpoint)  # target
         logger.debug(event.context.scene)  # group
