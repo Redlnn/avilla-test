@@ -11,7 +11,7 @@ channel = Channel.current()
 
 channel.meta['name'] = '吃啥'
 channel.meta['author'] = ['Red_lnn']
-channel.meta['description'] = '[!！.]吃啥'
+channel.meta['description'] = '[!！.]吃[啥咩]'
 
 
 async def get_food():
