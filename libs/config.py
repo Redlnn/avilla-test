@@ -7,8 +7,10 @@ from kayaku import config
 class MAHConfig:
     account: int = 123456789
     """Mirai Api Http 已登录的账号"""
-    host: str = 'http://localhost:8080'
+    host: str = 'localhost'
     """Mirai Api Http 地址"""
+    port: int = 8080
+    """Mirai Api Http 端口"""
     verifyKey: str = 'VerifyKey'
     """Mirai Api Http 的 verifyKey"""
 
@@ -36,7 +38,7 @@ class BasicConfig:
 
     MySQL示例：mysql+asyncmy://user:pass@hostname/dbname?charset=utf8mb4
     """
-    miraiApiHttp: MAHConfig = field(default_factory=lambda: MAHConfig(account=123456789, verifyKey='VerifyKey'))
+    miraiApiHttp: MAHConfig = field(default_factory=lambda: MAHConfig())
     """Mirai Api Http 配置"""
     admin: AdminConfig = field(default_factory=lambda: AdminConfig())
     """机器人管理相关配置"""

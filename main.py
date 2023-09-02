@@ -6,22 +6,13 @@ from asyncio import AbstractEventLoop
 
 import creart
 import kayaku
-from avilla.console.protocol import ConsoleProtocol
 from avilla.core.application import Avilla
-from avilla.elizabeth.connection.ws_client import (
-    ElizabethWsClientConfig,
-    ElizabethWsClientNetworking,
-)
-from avilla.elizabeth.protocol import ElizabethProtocol
+from avilla.elizabeth.protocol import ElizabethConfig, ElizabethProtocol
 from graia.broadcast import Broadcast
 from graia.saya import Saya
 from graiax.playwright.service import PlaywrightService
 from launart import Launart
 from loguru import logger
-from yarl import URL
-
-# from avilla.red.net.ws_client import RedWsClientConfig, RedWsClientNetworking
-# from avilla.red.protocol import RedProtocol
 
 kayaku.initialize({"{**}": "./config/{**}"})
 
@@ -53,30 +44,17 @@ launart.add_component(PlaywrightService())
 launart.add_component(DatabaseService(basic_cfg.databaseUrl))
 launart.add_component(AiohttpClientService())
 
-# avilla.apply_protocols(ConsoleProtocol())
-
-# red_protocol = RedProtocol()
-# red_conn = RedWsClientNetworking(
-#     red_protocol,
-#     RedWsClientConfig(
-#         URL("ws://localhost:16530"),
-#         '6cc94a89762da4cb5261b561e5078946f65f348a129883798d5a4d7366447f16',
-#     ),
-# )
-# red_protocol.service.connections.append(red_conn)
-# avilla.apply_protocols(red_protocol)
-
-mah_protocol = ElizabethProtocol()
-mah_conn = ElizabethWsClientNetworking(
-    mah_protocol,
-    ElizabethWsClientConfig(
-        URL(basic_cfg.miraiApiHttp.host),
-        basic_cfg.miraiApiHttp.verifyKey,
-        basic_cfg.miraiApiHttp.account,
-    ),
+avilla.apply_protocols(
+    ElizabethProtocol().configure(
+        ElizabethConfig(
+            basic_cfg.miraiApiHttp.account,
+            basic_cfg.miraiApiHttp.host,
+            basic_cfg.miraiApiHttp.port,
+            basic_cfg.miraiApiHttp.verifyKey,
+        )
+    )
 )
-mah_protocol.service.connections.append(mah_conn)
-avilla.apply_protocols(mah_protocol)
+
 
 logging.basicConfig(handlers=[loguru_handler], level=0, force=True)
 for name in logging.root.manager.loggerDict:
