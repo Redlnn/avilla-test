@@ -84,7 +84,7 @@ async def template2img(
             默认为 None，用于 https://playwright.dev/python/docs/api/class-page 中提到的部分方法，
             如 `page.route(...)` 等
     """
-    html_code: str = Template(template).render(**render_option)
+    html_code: str = Template(source=template).render(**render_option)
     return await html_render.render(
         html_code,
         extra_page_option=extra_page_option,
