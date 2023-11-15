@@ -17,12 +17,12 @@ def require_disable(module_name: str) -> Depend:
             if isinstance(event, MessageReceived):
                 if (
                     event.context.scene.follows('::group.*')
-                    and event.context.client.last_value in modules_cfg.disabledGroups[module_name]
+                    and str(event.context.client.last_value) in modules_cfg.disabledGroups[module_name]
                 ):
                     raise ExecutionStop
                 elif event.context.scene.follows('::channel.*'):
-                    guild_id = event.context.scene.last_value
-                    channel_id = event.context.client.last_value
+                    guild_id = int(event.context.scene.last_value)
+                    channel_id = int(event.context.client.last_value)
                     if guild_id not in modules_cfg.disabledGuilds[module_name]:
                         return
                     for guild in modules_cfg.disabledGuilds[module_name]:
