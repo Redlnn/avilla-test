@@ -6,7 +6,6 @@ from avilla.core.application import Avilla
 from avilla.core.elements import Picture, Text
 from avilla.core.resource import RawResource
 from avilla.core.selector import Selector
-from avilla.standard.core.message import MessageSend
 from graia.amnesia.message.chain import MessageChain
 from graia.broadcast.builtin.event import ExceptionThrowed
 from graia.saya import Channel
@@ -49,8 +48,19 @@ async def except_handle(event: ExceptionThrowed):
     avilla = Avilla.current()
     account = avilla.get_account(Selector().land('qq')).account
     basic_cfg = kayaku.create(BasicConfig, flush=True)
-    await account.staff.call_fn(
-        MessageSend.send,
-        Selector().land('qq').friend(str(basic_cfg.admin.masterId)),
-        message,
-    )
+
+    await account.get_context(
+        Selector(
+            {
+                'land': 'qq',
+                'friend': str(basic_cfg.admin.masterId),
+            }
+        )
+    ).scene.send_message(message)
+
+    # from avilla.standard.core.message import MessageSend
+    # await account.staff.call_fn(
+    #     MessageSend.send,
+    #     Selector().land('qq').friend(str(basic_cfg.admin.masterId)),
+    #     message,
+    # )
