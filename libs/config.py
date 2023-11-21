@@ -46,9 +46,12 @@ class BasicConfig:
 
 @dataclass
 class guildDisabled:
-    guildID: int
+    guildID: str
+    """频道ID"""
     globalDisabled: bool = False
-    disabledSubchannel: list[int] = field(default_factory=lambda: [])
+    """在所有子频道停用"""
+    disabledSubchannel: list[str] = field(default_factory=lambda: [])
+    """要停用的子频道"""
 
 
 @config('modules')
@@ -57,8 +60,17 @@ class ModulesConfig:
     """是否允许加载模块"""
     globalDisabledModules: list[str] = field(default_factory=lambda: [])
     """全局禁用的模块列表"""
-    disabledGroups: dict[str, list[int]] = field(default_factory=lambda: dict())
+    disabledGroups: dict[str, list[str]] = field(default_factory=lambda: dict())
     """分群禁用模块的列表，列表内为群号（`{模块名称: [123456789,]}`）"""
     disabledGuilds: dict[str, list[guildDisabled]] = field(default_factory=lambda: dict())
     """分频道禁用模块的列表
     （`{模块名称: [{guildID: 123, globalDisabled: true, disabledSubchannel: [123456789,]},]}`）"""
+
+
+@config('permission')
+class PermConfig:
+    whitelistEndbled: bool = False
+    whitelist: list[int] = field(default_factory=lambda: [])
+    """白名单群组/频道列表"""
+    usersBlacklist: list[str] = field(default_factory=lambda: [])
+    """用户黑名单列表"""

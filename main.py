@@ -1,7 +1,4 @@
-import logging
 import pkgutil
-import sys
-import traceback
 from asyncio import AbstractEventLoop
 
 import creart
@@ -10,9 +7,11 @@ from avilla.core.application import Avilla
 from avilla.elizabeth.protocol import ElizabethConfig, ElizabethProtocol
 from graia.broadcast import Broadcast
 from graia.saya import Saya
+from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graiax.playwright.service import PlaywrightService
 from launart import Launart
-from loguru import logger
+
+from libs.logger import replace_logger
 
 kayaku.initialize({"{**}": "./config/{**}"})
 
@@ -20,9 +19,9 @@ kayaku.initialize({"{**}": "./config/{**}"})
 
 from libs.aiohttp_service import AiohttpClientService
 from libs.config import BasicConfig
+from libs.control import require_blacklist
 from libs.database.service import DatabaseService
 from libs.path import modules_path
-from utils import loguru_exc_callback, loguru_exc_callback_async, loguru_handler
 
 loop = creart.create(AbstractEventLoop)
 broadcast = creart.create(Broadcast)
@@ -35,7 +34,11 @@ with saya.module_context():
     for module in pkgutil.iter_modules([str(modules_path)]):
         if module.name in ignore or module.name[0] in ('#', '.', '_'):
             continue
-        saya.require(f'modules.{module.name}')
+        channel = saya.require(f'modules.{module.name}')
+        for func in channel.content:
+            if isinstance(func.metaclass, ListenerSchema):
+                func.metaclass.decorators.append(require_blacklist())
+
 
 kayaku.bootstrap()
 basic_cfg = kayaku.create(BasicConfig)
@@ -55,19 +58,7 @@ avilla.apply_protocols(
     )
 )
 
-
-logging.basicConfig(handlers=[loguru_handler], level=0, force=True)
-for name in logging.root.manager.loggerDict:
-    _logger = logging.getLogger(name)
-    for handler in _logger.handlers:
-        if isinstance(handler, logging.StreamHandler):
-            _logger.removeHandler(handler)
-
-logger.remove()
-logger.add(sys.stderr, level="DEBUG", enqueue=True)
-
-loop.set_exception_handler(loguru_exc_callback_async)
-traceback.print_exception = loguru_exc_callback
+replace_logger(loop, 'DEBUG')
 
 launart.launch_blocking()
 kayaku.save_all()
