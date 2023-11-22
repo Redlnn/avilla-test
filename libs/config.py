@@ -5,6 +5,7 @@ from kayaku import config
 
 @dataclass
 class MAHConfig:
+    enabled: bool = False
     account: int = 123456789
     """Mirai Api Http 已登录的账号"""
     host: str = 'localhost'
@@ -13,6 +14,17 @@ class MAHConfig:
     """Mirai Api Http 端口"""
     verifyKey: str = 'VerifyKey'
     """Mirai Api Http 的 verifyKey"""
+
+
+@dataclass
+class QQAPIConfig:
+    enabled: bool = False
+    id: str = '123456789'
+    """机器人ID"""
+    token: str = 'xxx'
+    secret: str = 'xxx'
+    isSandbox: bool = False
+    """是否是沙箱环境"""
 
 
 @dataclass
@@ -28,7 +40,7 @@ class AdminConfig:
 @config('redbot')
 class BasicConfig:
     botName: str = 'RedBot'
-    """机器人的QQ号"""
+    """机器人的名字"""
     logChat: bool = True
     """是否将聊天信息打印在日志中"""
     debug: bool = False
@@ -40,6 +52,8 @@ class BasicConfig:
     """
     miraiApiHttp: MAHConfig = field(default_factory=lambda: MAHConfig())
     """Mirai Api Http 配置"""
+    qqAPI: QQAPIConfig = field(default_factory=lambda: QQAPIConfig())
+    """QQ官方API配置"""
     admin: AdminConfig = field(default_factory=lambda: AdminConfig())
     """机器人管理相关配置"""
 

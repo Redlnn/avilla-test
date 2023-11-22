@@ -5,6 +5,7 @@ import creart
 import kayaku
 from avilla.core.application import Avilla
 from avilla.elizabeth.protocol import ElizabethConfig, ElizabethProtocol
+from avilla.qqapi.protocol import Intents, QQAPIConfig, QQAPIProtocol
 from graia.broadcast import Broadcast
 from graia.saya import Saya
 from graia.saya.builtins.broadcast.schema import ListenerSchema
@@ -47,16 +48,30 @@ launart.add_component(PlaywrightService())
 launart.add_component(DatabaseService(basic_cfg.databaseUrl))
 launart.add_component(AiohttpClientService())
 
-avilla.apply_protocols(
-    ElizabethProtocol().configure(
-        ElizabethConfig(
-            basic_cfg.miraiApiHttp.account,
-            basic_cfg.miraiApiHttp.host,
-            basic_cfg.miraiApiHttp.port,
-            basic_cfg.miraiApiHttp.verifyKey,
+if basic_cfg.miraiApiHttp.enabled:
+    avilla.apply_protocols(
+        ElizabethProtocol().configure(
+            ElizabethConfig(
+                basic_cfg.miraiApiHttp.account,
+                basic_cfg.miraiApiHttp.host,
+                basic_cfg.miraiApiHttp.port,
+                basic_cfg.miraiApiHttp.verifyKey,
+            )
         )
     )
-)
+
+if basic_cfg.qqAPI.enabled:
+    avilla.apply_protocols(
+        QQAPIProtocol().configure(
+            QQAPIConfig(
+                id=basic_cfg.qqAPI.id,
+                token=basic_cfg.qqAPI.token,
+                secret=basic_cfg.qqAPI.secret,
+                is_sandbox=basic_cfg.qqAPI.isSandbox,
+                intent=Intents(guild_messages=True, at_messages=False, direct_message=True),
+            )
+        )
+    )
 
 replace_logger(loop, 'DEBUG')
 
