@@ -24,5 +24,6 @@ def replace_logger(loop: "AbstractEventLoop", level: str = 'INFO'):
     logger.remove()
     logger.add(sys.stderr, level=level, enqueue=True)
 
+    # sys.excepthook = loguru_exc_callback
+    # traceback.print_exception = loguru_exc_callback
     loop.set_exception_handler(loguru_exc_callback_async)
-    traceback.print_exception = loguru_exc_callback

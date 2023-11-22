@@ -30,6 +30,8 @@ saya = creart.create(Saya)
 launart = creart.create(Launart)
 avilla = Avilla(broadcast=broadcast, launch_manager=launart, message_cache_size=0)
 
+# inject_bypass_listener(broadcast=broadcast)
+
 ignore = ('__init__.py', '__pycache__')
 with saya.module_context():
     for module in pkgutil.iter_modules([str(modules_path)]):
