@@ -12,9 +12,10 @@ from avilla.standard.core.activity import ActivityTrigger
 from avilla.standard.core.activity.event import ActivityTrigged
 from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
-from graiax.shortcut.saya import listen
+from graiax.shortcut.saya import decorate, listen
 
 from libs.config import BasicConfig
+from libs.control import require_disable
 from libs.path import data_path
 
 channel = Channel.current()

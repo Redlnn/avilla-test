@@ -15,6 +15,7 @@ from launart import Launart
 from selectolax.parser import HTMLParser
 
 from libs.aiohttp_service import AiohttpClientInterface
+from libs.control import require_disable
 
 # from libs.control.permission import GroupPermission
 
@@ -27,7 +28,7 @@ channel.meta['description'] = '[!！.]wiki <要搜索的关键词>'
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]wiki').space(SpacePolicy.FORCE), 'keyword' @ RegexMatch(r'\S+')))
-# @decorate(GroupPermission.require())
+# @decorate(require_disable(channel.module))
 async def main(ctx: Context, keyword: RegexResult):
     if keyword.result is None:
         return

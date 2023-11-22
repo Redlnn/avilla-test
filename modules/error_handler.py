@@ -9,15 +9,17 @@ from avilla.core.selector import Selector
 from graia.amnesia.message.chain import MessageChain
 from graia.broadcast.builtin.event import ExceptionThrowed
 from graia.saya import Channel
-from graiax.shortcut.saya import listen
+from graiax.shortcut.saya import decorate, listen
 
 from libs.config import BasicConfig
+from libs.control import require_disable
 from libs.text2img import md2img
 
 channel = Channel.current()
 
 
 @listen(ExceptionThrowed)
+# @decorate(require_disable(channel.module))
 async def except_handle(event: ExceptionThrowed):
     if isinstance(event.event, ExceptionThrowed):
         return

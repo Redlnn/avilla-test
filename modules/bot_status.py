@@ -12,6 +12,7 @@ from graia.saya import Channel
 from graiax.shortcut.saya import decorate, dispatch, listen
 
 from libs import get_graia_version, get_version
+from libs.control import require_disable
 from libs.text2img import md2img
 
 channel = Channel.current()
@@ -33,7 +34,7 @@ pid = os.getpid()
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.](status|version)')))
-# @decorate(GroupPermission.require())
+# @decorate(require_disable(channel.module))
 async def main(ctx: Context):
     p = psutil.Process(pid)
     started_time = time.localtime(p.create_time())

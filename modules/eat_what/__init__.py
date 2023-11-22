@@ -5,7 +5,9 @@ from aiofile import async_open
 from avilla.core import Context, MessageReceived
 from avilla.twilight.twilight import RegexMatch, SpacePolicy, Twilight
 from graia.saya import Channel
-from graiax.shortcut.saya import dispatch, listen
+from graiax.shortcut.saya import decorate, dispatch, listen
+
+from libs.control import require_disable
 
 channel = Channel.current()
 
@@ -22,6 +24,7 @@ async def get_food():
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]吃啥').space(SpacePolicy.NOSPACE)))
+# @decorate(require_disable(channel.module))
 # @decorate(GroupPermission.require(), require_disable(channel.module))
 async def main(ctx: Context, event: MessageReceived):
     food = await get_food()

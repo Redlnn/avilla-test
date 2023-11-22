@@ -15,6 +15,8 @@ from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
 from graiax.shortcut.saya import decorate, dispatch, listen
 
+from libs.control import require_disable
+
 channel = Channel.current()
 
 channel.meta['name'] = '随机数'
@@ -24,7 +26,7 @@ channel.meta['description'] = '获得一个随机数\n用法：\n  [!！.]roll {
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]roll'), 'target' @ WildcardMatch()))
-# @decorate(GroupPermission.require())
+# @decorate(require_disable(channel.module))
 async def roll(ctx: Context, message: Message, target: RegexResult):
     if target.result is None:
         return
@@ -35,6 +37,6 @@ async def roll(ctx: Context, message: Message, target: RegexResult):
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.](dice|骰子|色子)')))
-# @decorate(GroupPermission.require())
+# @decorate(require_disable(channel.module))
 async def dice(ctx: Context):
     await ctx.scene.send_message(MessageChain([Dice(randint(1, 6))]))

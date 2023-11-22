@@ -15,8 +15,10 @@ import kayaku
 from avilla.core import Context, MessageReceived
 from avilla.twilight.twilight import RegexMatch, RegexResult, Twilight
 from graia.saya import Channel
-from graiax.shortcut.saya import dispatch, listen
+from graiax.shortcut.saya import decorate, dispatch, listen
 from loguru import logger
+
+from libs.control import require_disable
 
 from .ping_client import ping
 from .utils import ip_resolver
@@ -57,6 +59,7 @@ def message_maker(ping_result: dict[str, Any]):
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]ping'), 'ping_target' @ RegexMatch(r'\S+', optional=True)))
+# @decorate(require_disable(channel.module))
 async def main(ctx: Context, ping_target: RegexResult):
     """
     Ping 我的世界服务器

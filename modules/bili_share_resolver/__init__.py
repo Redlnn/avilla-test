@@ -28,7 +28,7 @@ from avilla.core.elements import Picture, Text
 from avilla.core.resource import RawResource
 from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
-from graiax.shortcut.saya import listen
+from graiax.shortcut.saya import decorate, listen
 from graiax.text2img.playwright import PageOption
 from launart import Launart
 from loguru import logger
@@ -36,7 +36,7 @@ from PIL.Image import Image
 from qrcode.main import QRCode
 
 from libs.aiohttp_service import AiohttpClientInterface
-from libs.path import root_path
+from libs.control import require_disable
 from libs.text2img import template2img
 
 channel = Channel.current()
@@ -82,6 +82,7 @@ class VideoInfo:
 
 
 @listen(MessageReceived)
+# @decorate(require_disable(channel.module))
 async def main(ctx: Context, message: MessageChain):
     msg = ''
     for element in message.content:

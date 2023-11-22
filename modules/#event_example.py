@@ -1,8 +1,10 @@
 from avilla.core import Context, MessageReceived
 from avilla.standard.core.activity.event import ActivityTrigged
 from graia.saya import Channel
-from graiax.shortcut.saya import listen
+from graiax.shortcut.saya import decorate, listen
 from loguru import logger
+
+from libs.control import require_test
 
 # for ruff
 # ruff: noqa: F841
@@ -12,6 +14,7 @@ channel = Channel.current()
 
 # 各种普通消息接收
 @listen(MessageReceived)
+@decorate(require_test())
 async def main1(ctx: Context, event: MessageReceived):
     logger.debug(event)
     logger.debug(ctx.client)  # sender (member / friend )

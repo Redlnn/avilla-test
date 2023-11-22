@@ -20,7 +20,7 @@ kayaku.initialize({"{**}": "./config/{**}"})
 
 from libs.aiohttp_service import AiohttpClientService
 from libs.config import BasicConfig
-from libs.control import require_blacklist
+from libs.control import require_blacklist, require_disable
 from libs.database.service import DatabaseService
 from libs.path import modules_path
 
@@ -36,9 +36,10 @@ with saya.module_context():
         if module.name in ignore or module.name[0] in ('#', '.', '_'):
             continue
         channel = saya.require(f'modules.{module.name}')
-        for func in channel.content:
-            if isinstance(func.metaclass, ListenerSchema):
-                func.metaclass.decorators.append(require_blacklist())
+        # for func in channel.content:
+        #     if isinstance(func.metaclass, ListenerSchema):
+        #         func.metaclass.decorators.append(require_blacklist())
+        #         func.metaclass.decorators.append(require_disable(channel.module))
 
 
 kayaku.bootstrap()

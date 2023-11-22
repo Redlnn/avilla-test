@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 
 import kayaku
@@ -11,10 +9,18 @@ from avilla.standard.core.privilege import Privilege
 from graia.broadcast.builtin.decorators import Depend
 from graia.broadcast.entities.event import Dispatchable
 from graia.broadcast.exceptions import ExecutionStop
+from loguru import logger
 
 from libs.config import ModulesConfig, PermConfig
 
 from ..config import BasicConfig
+
+
+def require_test():
+    async def __wrapper__(event: Dispatchable):
+        logger.success(event)
+
+    return Depend(__wrapper__)
 
 
 def require_platform(land: Sequence[str], exclude: bool):
