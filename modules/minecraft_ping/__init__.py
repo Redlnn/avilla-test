@@ -15,10 +15,8 @@ import kayaku
 from avilla.core import Context, MessageReceived
 from avilla.twilight.twilight import RegexMatch, RegexResult, Twilight
 from graia.saya import Channel
-from graiax.shortcut.saya import decorate, dispatch, listen
+from graiax.shortcut.saya import dispatch, listen
 from loguru import logger
-
-from libs.control import require_disable
 
 from .ping_client import ping
 from .utils import ip_resolver
@@ -59,7 +57,6 @@ def message_maker(ping_result: dict[str, Any]):
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]ping'), 'ping_target' @ RegexMatch(r'\S+', optional=True)))
-# @decorate(require_disable(channel.module))
 async def main(ctx: Context, ping_target: RegexResult):
     """
     Ping 我的世界服务器
@@ -71,17 +68,22 @@ async def main(ctx: Context, ping_target: RegexResult):
         ping_target (RegexResult): _description_
     """
 
-    if not ctx.scene.follows('::group'):
-        return
-
     if ping_target.matched and ping_target.result is not None:
         server_address = str(ping_target.result).strip()
     else:
         ping_cfg = kayaku.create(McServerPingConfig, flush=True)
-        if ctx.scene['group'] not in ping_cfg.servers:
-            await ctx.scene.send_message('该群组没有设置默认服务器地址')
+        if ctx.scene.follows('::group.*'):
+            if ctx.scene['group'] not in ping_cfg.servers:
+                await ctx.scene.send_message('该群组没有设置默认服务器地址')
+                return
+            server_address = ping_cfg.servers[ctx.scene['group']]
+        elif ctx.scene.follows('::guild.*'):
+            if ctx.scene['guild'] not in ping_cfg.servers:
+                await ctx.scene.send_message('该频道没有设置默认服务器地址')
+                return
+            server_address = ping_cfg.servers[ctx.scene['guild']]
+        else:
             return
-        server_address = ping_cfg.servers[ctx.scene['group']]
 
     if '://' in server_address:
         await ctx.scene.send_message('不支持带有协议前缀的地址')

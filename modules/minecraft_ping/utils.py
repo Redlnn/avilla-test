@@ -38,7 +38,7 @@ async def ip_resolver(string: str) -> tuple[str, str]:
             if target_ip is False:
                 dns_res = await dns_resolver(ip)
                 if dns_res is False:
-                    raise ValueError('Non-existent domain')
+                    raise ValueError(f'Can not resolve domain: {ip}')
                 ip = dns_res
             elif TYPE_CHECKING and target_port is False:
                 raise

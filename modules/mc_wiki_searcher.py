@@ -10,14 +10,11 @@ from urllib.parse import quote
 from avilla.core import Context, MessageReceived
 from avilla.twilight.twilight import RegexMatch, RegexResult, SpacePolicy, Twilight
 from graia.saya import Channel
-from graiax.shortcut.saya import decorate, dispatch, listen
+from graiax.shortcut.saya import dispatch, listen
 from launart import Launart
 from selectolax.parser import HTMLParser
 
 from libs.aiohttp_service import AiohttpClientInterface
-from libs.control import require_disable
-
-# from libs.control.permission import GroupPermission
 
 channel = Channel.current()
 
@@ -28,7 +25,6 @@ channel.meta['description'] = '[!！.]wiki <要搜索的关键词>'
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]wiki').space(SpacePolicy.FORCE), 'keyword' @ RegexMatch(r'\S+')))
-# @decorate(require_disable(channel.module))
 async def main(ctx: Context, keyword: RegexResult):
     if keyword.result is None:
         return

@@ -4,7 +4,7 @@ from avilla.standard.core.privilege import Privilege
 from graia.broadcast import ExecutionStop
 from graia.broadcast.builtin.decorators import Depend
 
-from ..config import BasicConfig
+from libs.config import BasicConfig
 
 
 class GroupPermission:

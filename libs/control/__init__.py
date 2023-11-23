@@ -11,16 +11,7 @@ from graia.broadcast.entities.event import Dispatchable
 from graia.broadcast.exceptions import ExecutionStop
 from loguru import logger
 
-from libs.config import ModulesConfig, PermConfig
-
-from ..config import BasicConfig
-
-
-def require_test():
-    async def __wrapper__(event: Dispatchable):
-        logger.success(event)
-
-    return Depend(__wrapper__)
+from libs.config import BasicConfig, ModulesConfig, PermConfig
 
 
 def require_platform(land: Sequence[str], exclude: bool):
@@ -52,25 +43,29 @@ def require_disable(module_name: str) -> Depend:
     async def __wrapper__(event: Dispatchable):
         modules_cfg = kayaku.create(ModulesConfig, True)
         if module_name in modules_cfg.globalDisabledModules:
+            logger.warning(f'{module_name} is disabled globally.')
             raise ExecutionStop
         elif module_name in modules_cfg.disabledGroups:
             if isinstance(event, MessageReceived):
                 if (
                     event.context.scene.follows('::group.*')
-                    and event.context.client['group'] in modules_cfg.disabledGroups[module_name]
+                    and event.context.scene['group'] in modules_cfg.disabledGroups[module_name]
                 ):
+                    logger.warning(f'{module_name} is disabled for {event.context.scene['group']}.')
                     raise ExecutionStop
-                elif event.context.scene.follows('::channel.*'):
+                elif event.context.scene.follows('::guild.*'):
                     guild_id = event.context.scene['guild']
-                    channel_id = event.context.client['channel'] or None
+                    channel_id = event.context.scene['channel'] or None
                     if guild_id not in modules_cfg.disabledGuilds[module_name]:
                         return True
                     for guild in modules_cfg.disabledGuilds[module_name]:
                         if guild_id != guild.guildID:
                             continue
                         if guild.globalDisabled:
+                            logger.warning(f'{module_name} is disabled for guild {guild}.')
                             raise ExecutionStop
                         if channel_id in guild.disabledSubchannel:
+                            logger.warning(f'{module_name} is disabled for channel {channel_id} of guild {guild}.')
                             raise ExecutionStop
                 else:
                     return True
@@ -87,18 +82,16 @@ def require_blacklist() -> Depend:
     """判断触发者是否在黑名单或白名单内"""
 
     async def __wrapper__(event: Dispatchable):
-        if isinstance(event, AvillaEvent):
-            perm_cfg = kayaku.create(PermConfig, True)
-            if event.context.client.last_value in perm_cfg.usersBlacklist:
+        if not isinstance(event, AvillaEvent):
+            return True
+        perm_cfg = kayaku.create(PermConfig, True)
+        if event.context.client.last_value in perm_cfg.usersBlacklist:
+            raise ExecutionStop
+        if perm_cfg.whitelistEndbled:
+            if event.context.scene.follows('::group.*') and event.context.client['group'] not in perm_cfg.whitelist:
                 raise ExecutionStop
-            if perm_cfg.whitelistEndbled:
-                if event.context.scene.follows('::group.*') and event.context.client['group'] not in perm_cfg.whitelist:
-                    raise ExecutionStop
-                if (
-                    event.context.scene.follows('::channel.*')
-                    and event.context.scene['guild'] not in perm_cfg.whitelist
-                ):
-                    raise ExecutionStop
+            if event.context.scene.follows('::channel.*') and event.context.scene['guild'] not in perm_cfg.whitelist:
+                raise ExecutionStop
 
     return Depend(__wrapper__)
 
@@ -116,25 +109,26 @@ def require_admin(only: bool = False):
     """
 
     async def __wrapper__(event: Dispatchable):
-        if isinstance(event, AvillaEvent):
-            if event.context.scene['land'] != 'qq':
-                if event.context.scene.follows('::group.*'):
-                    return True
-                if event.context.scene.follows('::friend.*'):
-                    return True
-                private = "user" in event.context.scene
-            else:
-                private = "friend" in event.context.scene
-
-            config = kayaku.create(BasicConfig, True)
-
-            if event.context.client.last_value in config.admin.admins:
+        if not isinstance(event, AvillaEvent):
+            return True
+        if event.context.scene['land'] != 'qq':
+            if event.context.scene.follows('::group.*'):
                 return True
-            privilege_info = await event.context.client.pull(Privilege)
-            if not only and (privilege_info.available or event.context.client.last_value in config.admin.admins):
+            if event.context.scene.follows('::friend.*'):
                 return True
-            text = "权限不足！" if private else [Notice(event.context.client), Text("\n权限不足！")]
-            await event.context.scene.send_message(text)
-            raise ExecutionStop
+            private = "user" in event.context.scene
+        else:
+            private = "friend" in event.context.scene
+
+        config = kayaku.create(BasicConfig, True)
+
+        if event.context.client.last_value in config.admin.admins:
+            return True
+        privilege_info = await event.context.client.pull(Privilege)
+        if not only and (privilege_info.available or event.context.client.last_value in config.admin.admins):
+            return True
+        text = "权限不足！" if private else [Notice(event.context.client), Text("\n权限不足！")]
+        await event.context.scene.send_message(text)
+        raise ExecutionStop
 
     return Depend(__wrapper__)

@@ -5,7 +5,6 @@ from dns.rdata import Rdata
 from dns.rdatatype import RdataType
 from dns.rdtypes.IN.SRV import SRV
 from dns.resolver import NXDOMAIN, NoAnswer
-from loguru import logger
 
 
 # # A 记录或 CNAME 记录
@@ -14,7 +13,7 @@ async def dns_resolver(domain: str) -> Literal[False] | str:
     resolver.nameservers = ['119.29.29.29']
     try:
         resolve_result = await resolver.resolve(domain, 'A', tcp=True, lifetime=5)
-    except (NoAnswer, NXDOMAIN):
+    except Exception:
         return False
     if resolve_result.rrset is None:
         return False
@@ -27,7 +26,7 @@ async def dns_resolver_srv(domain: str) -> tuple[str, str] | tuple[Literal[False
     resolver.nameservers = ['119.29.29.29']
     try:
         resolve_result = await resolver.resolve(f'_minecraft._tcp.{domain}', 'SRV', tcp=True, lifetime=5)
-    except (NoAnswer, NXDOMAIN):
+    except Exception:
         return False, False
     if resolve_result.rrset is None:
         return False, False

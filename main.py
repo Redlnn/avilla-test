@@ -18,6 +18,7 @@ kayaku.initialize({"{**}": "./config/{**}"})
 
 # ruff: noqa: E402
 
+from libs import CustomDispatcher
 from libs.aiohttp_service import AiohttpClientService
 from libs.config import BasicConfig
 from libs.control import require_blacklist, require_disable
@@ -25,12 +26,13 @@ from libs.database.service import DatabaseService
 from libs.path import modules_path
 
 loop = creart.create(AbstractEventLoop)
-broadcast = creart.create(Broadcast)
+bcc = creart.create(Broadcast)
 saya = creart.create(Saya)
 launart = creart.create(Launart)
-avilla = Avilla(broadcast=broadcast, launch_manager=launart, message_cache_size=0)
+avilla = Avilla(broadcast=bcc, launch_manager=launart, message_cache_size=0)
 
-# inject_bypass_listener(broadcast=broadcast)
+bcc.finale_dispatchers.append(CustomDispatcher)
+# inject_bypass_listener(broadcast=bcc)
 
 ignore = ('__init__.py', '__pycache__')
 with saya.module_context():
@@ -38,10 +40,11 @@ with saya.module_context():
         if module.name in ignore or module.name[0] in ('#', '.', '_'):
             continue
         channel = saya.require(f'modules.{module.name}')
-        # for func in channel.content:
-        #     if isinstance(func.metaclass, ListenerSchema):
-        #         func.metaclass.decorators.append(require_blacklist())
-        #         func.metaclass.decorators.append(require_disable(channel.module))
+        for listener in bcc.listeners:
+            for cube in channel.content:
+                if isinstance(cube.metaclass, ListenerSchema) and listener.callable == cube.content:
+                    listener.decorators.append(require_blacklist())
+                    listener.decorators.append(require_disable(channel.module))
 
 
 kayaku.bootstrap()

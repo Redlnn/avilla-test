@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:32219fc8733692ea06ee7a2728c37cdae482ed282f88faa68d78342540444d6a"
+content_hash = "sha256:1cf3d9982bfc84bc388b08fdff88c6fe6dbf9dec703087b8f3b8f9fc2dcf0465"
 
 [[package]]
 name = "aiodns"
@@ -258,15 +258,15 @@ files = [
 
 [[package]]
 name = "avilla-qqapi"
-version = "1.0.0a18"
+version = "1.0.0a19"
 requires_python = ">=3.9"
 summary = ""
 dependencies = [
     "aiohttp>=3.8.1",
 ]
 files = [
-    {file = "avilla_qqapi-1.0.0a18-py3-none-any.whl", hash = "sha256:c10d2a02c6cdf09fcc61dac50f19d76817c2149b48afca0260d01ad8d0156cbb"},
-    {file = "avilla_qqapi-1.0.0a18.tar.gz", hash = "sha256:489b9dfb79ef17ffbab35f5c2e0d100d75b6f90f06aacc43573bc305ba9ce76c"},
+    {file = "avilla_qqapi-1.0.0a19-py3-none-any.whl", hash = "sha256:cb4474d9e69731252f74c82d70fbb63c1f5197e90c91ee95be09d76adeb025eb"},
+    {file = "avilla_qqapi-1.0.0a19.tar.gz", hash = "sha256:b413b049b722eb14a0d70b532a50bbce2797092330ab0065dddd9d573d77da32"},
 ]
 
 [[package]]

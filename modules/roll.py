@@ -13,9 +13,7 @@ from avilla.standard.qq.elements import Dice
 from avilla.twilight.twilight import RegexMatch, RegexResult, Twilight, WildcardMatch
 from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
-from graiax.shortcut.saya import decorate, dispatch, listen
-
-from libs.control import require_disable
+from graiax.shortcut.saya import dispatch, listen
 
 channel = Channel.current()
 
@@ -26,7 +24,6 @@ channel.meta['description'] = '获得一个随机数\n用法：\n  [!！.]roll {
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]roll'), 'target' @ WildcardMatch()))
-# @decorate(require_disable(channel.module))
 async def roll(ctx: Context, message: Message, target: RegexResult):
     if target.result is None:
         return
@@ -37,6 +34,5 @@ async def roll(ctx: Context, message: Message, target: RegexResult):
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.](dice|骰子|色子)')))
-# @decorate(require_disable(channel.module))
 async def dice(ctx: Context):
     await ctx.scene.send_message(MessageChain([Dice(randint(1, 6))]))

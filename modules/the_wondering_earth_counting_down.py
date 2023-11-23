@@ -47,7 +47,6 @@ channel.meta['description'] = (
         'dark' @ ArgumentMatch('--dark', '-d', '-D', action="store_true"),
     )
 )
-# @decorate(require_disable(channel.module))
 async def main(ctx: Context, target: RegexResult, gif: ArgResult[bool], dark: ArgResult[bool]):
     if target.result is None:
         raise ValueError('输入格式不正确')

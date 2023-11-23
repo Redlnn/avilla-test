@@ -23,10 +23,9 @@ from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
 from graia.scheduler.saya import SchedulerSchema
 from graia.scheduler.timers import crontabify
-from graiax.shortcut.saya import decorate, dispatch, listen
+from graiax.shortcut.saya import dispatch, listen
 from loguru import logger
 
-from libs.control import require_disable
 from libs.path import data_path
 from libs.text2img import md2img
 
@@ -92,7 +91,6 @@ lucky_things = {
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.](jrrp|抽签)')))
-# @decorate(require_disable(channel.module))
 async def main(ctx: Context):
     target = ctx.client.last_value
 

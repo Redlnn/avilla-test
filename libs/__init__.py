@@ -1,6 +1,14 @@
+import contextlib
 from importlib import metadata
+from typing import TYPE_CHECKING
 
 from graia.broadcast import Broadcast
+from graia.broadcast.entities.dispatcher import BaseDispatcher
+
+from libs.typing import generic_isinstance
+
+if TYPE_CHECKING:
+    from graia.broadcast.interfaces.dispatcher import DispatcherInterface
 
 
 def get_graia_version():
@@ -82,3 +90,11 @@ def inject_bypass_listener(broadcast: Broadcast):
         import graia.saya.builtins.broadcast.schema
 
         graia.saya.builtins.broadcast.schema.Listener = BypassListener  # type: ignore
+
+
+class CustomDispatcher(BaseDispatcher):
+    @classmethod
+    async def catch(cls, interface: "DispatcherInterface"):
+        with contextlib.suppress(TypeError):
+            if generic_isinstance(interface.event, interface.annotation):
+                return interface.event

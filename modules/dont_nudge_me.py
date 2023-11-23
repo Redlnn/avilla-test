@@ -12,10 +12,9 @@ from avilla.standard.core.activity import ActivityTrigger
 from avilla.standard.core.activity.event import ActivityTrigged
 from graia.amnesia.message.chain import MessageChain
 from graia.saya import Channel
-from graiax.shortcut.saya import decorate, listen
+from graiax.shortcut.saya import listen
 
 from libs.config import BasicConfig
-from libs.control import require_disable
 from libs.path import data_path
 
 channel = Channel.current()
@@ -53,7 +52,6 @@ async def get_message(event: ActivityTrigged):
 
 
 @listen(ActivityTrigged)
-# @decorate(require_disable(channel.module))
 async def main(ctx: Context, event: ActivityTrigged):
     if event.id != 'nudge':
         return
