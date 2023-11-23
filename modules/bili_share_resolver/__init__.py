@@ -124,8 +124,8 @@ async def main(ctx: Context, message: MessageChain):
                     f'{video_info.title}\n'
                     '—————————————\n'
                     f'UP主：{video_info.up_name}\n'
-                    f'{math(video_info.views)}播放 {math(video_info.likes)}赞\n'
-                    f'链接：https://b23.tv/{video_info.bvid}',
+                    f'{math(video_info.views)}播放 {math(video_info.likes)}赞'
+                    # f'链接：https://b23.tv/{video_info.bvid}',
                 ),
             ]
         )
