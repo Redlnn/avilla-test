@@ -50,11 +50,11 @@ class BasicConfig:
 
     MySQL示例：mysql+asyncmy://user:pass@hostname/dbname?charset=utf8mb4
     """
-    miraiApiHttp: MAHConfig = field(default_factory=lambda: MAHConfig())
+    miraiApiHttp: MAHConfig = field(default_factory=MAHConfig)
     """Mirai Api Http 配置"""
-    qqAPI: QQAPIConfig = field(default_factory=lambda: QQAPIConfig())
+    qqAPI: QQAPIConfig = field(default_factory=QQAPIConfig)
     """QQ官方API配置"""
-    admin: AdminConfig = field(default_factory=lambda: AdminConfig())
+    admin: AdminConfig = field(default_factory=AdminConfig)
     """机器人管理相关配置"""
 
 
@@ -74,9 +74,9 @@ class ModulesConfig:
     """是否允许加载模块"""
     globalDisabledModules: list[str] = field(default_factory=lambda: [])
     """全局禁用的模块列表"""
-    disabledGroups: dict[str, list[str]] = field(default_factory=lambda: dict())
+    disabledGroups: dict[str, list[str]] = field(default_factory=lambda: {})
     """分群禁用模块的列表，列表内为群号（`{模块名称: [123456789,]}`）"""
-    disabledGuilds: dict[str, list[guildDisabled]] = field(default_factory=lambda: dict())
+    disabledGuilds: dict[str, list[guildDisabled]] = field(default_factory=lambda: {})
     """分频道禁用模块的列表
     （`{模块名称: [{guildID: 123, globalDisabled: true, disabledSubchannel: [123456789,]},]}`）"""
 

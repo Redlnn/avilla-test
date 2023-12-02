@@ -1,14 +1,18 @@
 import pkgutil
 from asyncio import AbstractEventLoop
 
-import creart
 import kayaku
+from arclet.alconna.avilla import AlconnaAvillaAdapter
+from arclet.alconna.graia import AlconnaBehaviour, AlconnaGraiaService
 from avilla.core.application import Avilla
 from avilla.elizabeth.protocol import ElizabethConfig, ElizabethProtocol
 from avilla.qqapi.protocol import Intents, QQAPIConfig, QQAPIProtocol
+from creart import it
 from graia.broadcast import Broadcast
 from graia.saya import Saya
 from graia.saya.builtins.broadcast.schema import ListenerSchema
+from graia.scheduler import GraiaScheduler
+from graia.scheduler.service import SchedulerService
 from graiax.playwright.service import PlaywrightService
 from launart import Launart
 
@@ -25,10 +29,11 @@ from libs.control import require_blacklist, require_disable
 from libs.database.service import DatabaseService
 from libs.path import modules_path
 
-loop = creart.create(AbstractEventLoop)
-bcc = creart.create(Broadcast)
-saya = creart.create(Saya)
-launart = creart.create(Launart)
+loop = it(AbstractEventLoop)
+bcc = it(Broadcast)
+saya = it(Saya)
+launart = it(Launart)
+it(AlconnaBehaviour)
 avilla = Avilla(broadcast=bcc, launch_manager=launart, message_cache_size=0)
 
 bcc.finale_dispatchers.append(CustomDispatcher)
@@ -50,9 +55,11 @@ with saya.module_context():
 kayaku.bootstrap()
 basic_cfg = kayaku.create(BasicConfig)
 
+launart.add_component(SchedulerService(it(GraiaScheduler)))
 launart.add_component(PlaywrightService())
 launart.add_component(DatabaseService(basic_cfg.databaseUrl))
 launart.add_component(AiohttpClientService())
+launart.add_component(AlconnaGraiaService(AlconnaAvillaAdapter, enable_cache=False, global_remove_tome=True))
 
 if basic_cfg.miraiApiHttp.enabled:
     avilla.apply_protocols(
