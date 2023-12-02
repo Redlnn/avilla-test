@@ -51,7 +51,7 @@ def require_disable(module_name: str) -> Depend:
                     event.context.scene.follows('::group.*')
                     and event.context.scene['group'] in modules_cfg.disabledGroups[module_name]
                 ):
-                    logger.warning(f'{module_name} is disabled for {event.context.scene['group']}.')
+                    logger.warning(f'{module_name} is disabled for {event.context.scene["group"]}.')
                     raise ExecutionStop
                 elif event.context.scene.follows('::guild.*'):
                     guild_id = event.context.scene['guild']
