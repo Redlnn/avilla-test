@@ -1,5 +1,5 @@
-from collections.abc import Sequence
-from typing import Any, TypeVar, cast
+from collections.abc import Mapping, Sequence
+from typing import Any, Literal, TypeVar, cast, overload
 
 from sqlalchemy.engine.result import Result
 from sqlalchemy.engine.url import URL
@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.sql.base import Executable
 from sqlalchemy.sql.selectable import TypedReturnsRows
+from sqlalchemy.util import EMPTY_DICT
 
 from libs.database.model import Base
 from libs.database.types import EngineOptions
@@ -25,44 +26,84 @@ class DatabaseManager:
             engine_options = {"echo": "debug", "pool_pre_ping": True}
         self.engine = create_async_engine(url, **engine_options)
 
+    @overload
     @classmethod
     def get_engine_url(
         cls,
-        database_name: str,
+        database: str,
+        database_type: Literal['sqlite'] = "sqlite",
         driver: str = "aiosqlite",
-        database_type: str = "sqlite",
+        *,
+        query: Mapping[str, Sequence[str] | str] = EMPTY_DICT,
+    ) -> URL:
+        ...
+
+    @overload
+    @classmethod
+    def get_engine_url(
+        cls,
+        database: str,
+        database_type: Literal['mysql'] = "mysql",
+        driver: str = "aiomysql",
+        *,
         host: str | None = None,
         port: int = 3306,
         username: str | None = None,
         passwd: str | None = None,
-        **kwargs: dict[str, str],
-    ) -> str:
+        query: Mapping[str, Sequence[str] | str] = EMPTY_DICT,
+    ) -> URL:
+        ...
+
+    @classmethod
+    def get_engine_url(
+        cls,
+        database: str,
+        database_type: Literal['mysql'] | Literal['sqlite'] = "sqlite",
+        driver: str = "aiosqlite",
+        *,
+        host: str | None = None,
+        port: int = 3306,
+        username: str | None = None,
+        passwd: str | None = None,
+        query: Mapping[str, Sequence[str] | str] = EMPTY_DICT,
+    ) -> URL:
         """
         生成一个数据库链接，仅支持 mysql 或 sqlite
 
         Args:
-            database_name (str):
-                MySQL/MariaDB 时为数据库名称
-                SQLite 时则为数据库名称
+            database (str):
+                MySQL/MariaDB 时为数据库名称，如：database
+                SQLite 时则为数据库路径，如：data/database.db
+            database_type (str, optional): 数据库类型. 默认为 "sqlite".
+                当使用 mysql 时，建议将服务端的 chartset 设置为 utf8mb4_unicode_ci，
+                此时 query 参数需填入 {'chartset': 'utf8mb4'}
             driver (str, optional): 数据库 Driver. 默认为 "aiosqlite".
                 可用的 MySQL/MariaDB Driver 列表详见：https://docs.sqlalchemy.org/en/20/dialects/mysql.html#dialect-mysql
                 可用的 SQLite Driver 列表详见：https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#dialect-sqlite
-            database_type (str, optional): 数据库类型. 默认为 "mysql".
             host (str, optional): MySQL/MariaDB 服务器地址.
             port (int): MySQL/MariaDB 服务器端口. 默认为 3306.
             username (str, optional): MySQL/MariaDB 服务器用户名. 默认为 None.
             passwd (str, optional): MySQL/MariaDB 服务器密码. 默认为 None.
         """
-        if database_type == "mysql":
-            if host is None or username is None or passwd is None:
-                raise ValueError("Option `username` or `passwd` or `database_name` must in parameter.")
-            url = f"mysql+{driver}://{username}:{passwd}@{host}:{port}/{database_name}"
-        elif database_type == "sqlite":
-            url = f"sqlite+{driver}://{database_name}"
-        else:
-            raise ValueError("Unsupport database type, please creating URL manually.")
-        kw = "".join(f"&{key}={value}" for key, value in kwargs.items()).lstrip("&")
-        return f'{url}?{kw}' if kw else url
+        match database_type:
+            case "mysql":
+                return URL.create(
+                    f'mysql+{driver}',
+                    username,
+                    passwd,
+                    host,
+                    port,
+                    database,
+                    query,
+                )
+            case "sqlite":
+                return URL.create(
+                    f'sqlite+{driver}',
+                    database=database,
+                    query=query,
+                )
+            case _:
+                raise ValueError("Unsupport database type, please create `sqlalchemy.engine.url.URL` object manually.")
 
     async def initialize(self, session_options: dict[str, Any] | None = None):
         """初始化数据库
