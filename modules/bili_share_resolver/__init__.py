@@ -35,7 +35,7 @@ from loguru import logger
 from PIL.Image import Image
 from qrcode.main import QRCode
 
-from libs.aiohttp_service import AiohttpClientInterface
+from libs.aiohttp_service import AiohttpClientService
 from libs.text2img import template2img
 
 channel = Channel.current()
@@ -137,7 +137,7 @@ async def b23_url_extract(b23_url: str) -> Literal[False] | str:
         return False
 
     launart = Launart.current()
-    session = launart.get_interface(AiohttpClientInterface).service.session
+    session = launart.get_component(AiohttpClientService).session
 
     async with session.get(f'https://{url.group()}', allow_redirects=True) as resp:
         target = str(resp.url)
@@ -146,7 +146,7 @@ async def b23_url_extract(b23_url: str) -> Literal[False] | str:
 
 async def get_video_info(video_id: str) -> dict:
     launart = Launart.current()
-    session = launart.get_interface(AiohttpClientInterface).service.session
+    session = launart.get_component(AiohttpClientService).session
 
     if video_id[:2].lower() == 'av':
         async with session.get(f'http://api.bilibili.com/x/web-interface/view?aid={video_id[2:]}') as resp:
@@ -200,7 +200,7 @@ async def gen_img(data: VideoInfo) -> bytes:
     desc = data.desc.strip().replace('\n', '<br/>')
 
     launart = Launart.current()
-    session = launart.get_interface(AiohttpClientInterface).service.session
+    session = launart.get_component(AiohttpClientService).session
 
     async with session.get(f'https://api.bilibili.com/x/relation/stat?vmid={data.up_mid}') as resp:
         result = await resp.json()

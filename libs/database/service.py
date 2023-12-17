@@ -5,23 +5,18 @@ from loguru import logger
 from sqlalchemy.engine import make_url
 from sqlalchemy.engine.url import URL
 
-from libs.database.interface import Database
 from libs.database.manager import DatabaseManager
 
 
 class DatabaseService(Service):
     id: str = "database/init"
     db_manager: DatabaseManager
-    supported_interface_types: set[Any] = {Database}
 
     def __init__(self, url: str | URL) -> None:
         if isinstance(url, str):
             url = make_url(url)
         self.db_manager = DatabaseManager(url)
         super().__init__()
-
-    def get_interface(self, typ: type[Database]) -> Database:
-        return Database(self.db_manager)
 
     @property
     def required(self) -> set[str]:

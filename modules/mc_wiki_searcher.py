@@ -11,10 +11,9 @@ from avilla.core import Context, MessageReceived
 from avilla.twilight.twilight import RegexMatch, RegexResult, SpacePolicy, Twilight
 from graia.saya import Channel
 from graiax.shortcut.saya import dispatch, listen
-from launart import Launart
 from selectolax.parser import HTMLParser
 
-from libs.aiohttp_service import AiohttpClientInterface
+from libs.aiohttp_service import AiohttpClientService
 
 channel = Channel.current()
 
@@ -25,7 +24,7 @@ channel.meta['description'] = '[!！.]wiki <要搜索的关键词>'
 
 @listen(MessageReceived)
 @dispatch(Twilight(RegexMatch(r'[!！.]wiki').space(SpacePolicy.FORCE), 'keyword' @ RegexMatch(r'\S+')))
-async def main(ctx: Context, keyword: RegexResult):
+async def main(ctx: Context, keyword: RegexResult, aiohttp_service: AiohttpClientService):
     if keyword.result is None:
         return
     key_word: str = str(keyword.result).strip()
@@ -37,10 +36,8 @@ async def main(ctx: Context, keyword: RegexResult):
     bili_url = f'https://wiki.biligame.com/mc/{search_parm}'
     fandom_url = f'https://minecraft.fandom.com/zh/wiki/{search_parm}?variant=zh-cn'
 
-    launart = Launart.current()
-    session = launart.get_interface(AiohttpClientInterface).service.session
     try:
-        async with session.get(bili_url) as resp:
+        async with aiohttp_service.session.get(bili_url) as resp:
             status_code = resp.status
             text = await resp.text()
     except TimeoutError:

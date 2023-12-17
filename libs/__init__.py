@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from graia.broadcast import Broadcast
 from graia.broadcast.entities.dispatcher import BaseDispatcher
+from launart import Launart, Service
 
 from libs.typing import generic_isinstance
 
@@ -92,9 +93,12 @@ def inject_bypass_listener(broadcast: Broadcast):
         graia.saya.builtins.broadcast.schema.Listener = BypassListener  # type: ignore
 
 
-class CustomDispatcher(BaseDispatcher):
+class RedbotDispatcher(BaseDispatcher):
     @classmethod
     async def catch(cls, interface: "DispatcherInterface"):
         with contextlib.suppress(TypeError):
             if generic_isinstance(interface.event, interface.annotation):
                 return interface.event
+            if generic_isinstance(interface.event, Service):
+                manager = Launart.current()
+                return manager.get_component(interface.annotation)

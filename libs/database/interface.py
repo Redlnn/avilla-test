@@ -14,18 +14,6 @@ if TYPE_CHECKING:
     from libs.database.manager import DatabaseManager
 
 
-class DatabaseImpl:
-    db: "DatabaseManager"
-
-    def __init__(self, db: "DatabaseManager"):
-        self.db = db
-
-    if not TYPE_CHECKING:
-
-        def __getattr__(self, name: str) -> Any:
-            return self.db.__getattribute__(name)
-
-
 class DatabaseStub:
     db: "DatabaseManager"
 
@@ -59,6 +47,3 @@ class DatabaseStub:
 
     async def delete_many_exist(self, *rows):
         ...
-
-
-Database = DatabaseStub if TYPE_CHECKING else DatabaseImpl

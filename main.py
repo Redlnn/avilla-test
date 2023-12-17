@@ -22,7 +22,7 @@ kayaku.initialize({"{**}": "./config/{**}"})
 
 # ruff: noqa: E402
 
-from libs import CustomDispatcher
+from libs import RedbotDispatcher
 from libs.aiohttp_service import AiohttpClientService
 from libs.config import BasicConfig
 from libs.control import require_blacklist, require_disable
@@ -36,7 +36,7 @@ launart = it(Launart)
 it(AlconnaBehaviour)
 avilla = Avilla(broadcast=bcc, launch_manager=launart, message_cache_size=0)
 
-bcc.finale_dispatchers.append(CustomDispatcher)
+bcc.finale_dispatchers.append(RedbotDispatcher)
 # inject_bypass_listener(broadcast=bcc)
 
 ignore = ('__init__.py', '__pycache__')
