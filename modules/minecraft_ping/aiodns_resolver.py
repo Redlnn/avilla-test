@@ -4,7 +4,6 @@ from dns.asyncresolver import Resolver
 from dns.rdata import Rdata
 from dns.rdatatype import RdataType
 from dns.rdtypes.IN.SRV import SRV
-from dns.resolver import NXDOMAIN, NoAnswer
 
 
 # # A 记录或 CNAME 记录

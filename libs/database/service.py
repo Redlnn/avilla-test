@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 
 from launart import Service
 from loguru import logger
