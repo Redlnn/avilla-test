@@ -158,13 +158,17 @@ def chouqian(renpin: int) -> str:
 def gen_qianwen(renpin: int) -> str:
     match chouqian(renpin):
         case '大吉':
-            return f'——大吉——\n\n{random.choice(qianwens["大吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["吉"])}'
+            return (
+                f'——大吉——\n\n{random.choice(qianwens["大吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["吉"])}'
+            )
         case '中吉':
             return f'——中吉——\n\n{random.choice(qianwens["吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["吉"])}'
         case '吉':
             return f'——吉——\n\n{random.choice(qianwens["吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["吉"])}'
         case '末吉':
-            return f'——末吉——\n\n{random.choice(qianwens["末吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["凶"])}'
+            return (
+                f'——末吉——\n\n{random.choice(qianwens["末吉"])}\n\n今天的幸运物是：{random.choice(lucky_things["凶"])}'
+            )
         case '凶':
             return f'——凶——\n\n{random.choice(qianwens["凶"])}\n\n今天的幸运物是：{random.choice(lucky_things["凶"])}'
         case '大凶':

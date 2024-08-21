@@ -40,7 +40,7 @@ def loguru_exc_callback(cls: type[BaseException], val: BaseException, tb: Traceb
         tb (TracebackType): 回溯消息
     """
     if not issubclass(cls, ExecutionStop | PropagationCancelled):
-        logger.opt(exception=(cls, val, tb)).error("Exception:")
+        logger.opt(exception=(cls, val, tb)).error("Exception!")
 
 
 def loguru_exc_callback_async(loop, context: dict):

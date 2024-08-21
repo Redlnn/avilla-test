@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from avilla.qqapi.protocol import Intents
 from kayaku import config
 
 
@@ -20,11 +21,30 @@ class MAHConfig:
 class QQAPIConfig:
     enabled: bool = False
     id: str = '123456789'
-    """机器人ID"""
+    """AppID (机器人ID)"""
     token: str = 'xxx'
+    """Token (机器人令牌)"""
     secret: str = 'xxx'
+    """AppSecret (机器人密钥)"""
+    shard: tuple[int, int] | None = None
+    intent: Intents = field(default_factory=Intents)
     isSandbox: bool = False
     """是否是沙箱环境"""
+
+
+@dataclass
+class OneBot11ForwardConfig:
+    enabled: bool = False
+    forward_url: str = 'undefined'
+    forward_token: str = 'undefined'
+    bot_id: str = 'undefined'
+
+
+@dataclass
+class Protocol:
+    miraiApiHttp: MAHConfig = field(default_factory=MAHConfig)
+    QQAPI: QQAPIConfig = field(default_factory=QQAPIConfig)
+    OneBot11: OneBot11ForwardConfig = field(default_factory=OneBot11ForwardConfig)
 
 
 @dataclass
@@ -50,10 +70,8 @@ class BasicConfig:
 
     MySQL示例：mysql+asyncmy://user:pass@hostname/dbname?charset=utf8mb4
     """
-    miraiApiHttp: MAHConfig = field(default_factory=MAHConfig)
-    """Mirai Api Http 配置"""
-    qqAPI: QQAPIConfig = field(default_factory=QQAPIConfig)
-    """QQ官方API配置"""
+    protocol: Protocol = field(default_factory=Protocol)
+    """协议配置"""
     admin: AdminConfig = field(default_factory=AdminConfig)
     """机器人管理相关配置"""
 

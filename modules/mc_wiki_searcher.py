@@ -31,10 +31,10 @@ async def main(ctx: Context, keyword: RegexResult, aiohttp_service: AiohttpClien
     search_parm: str = quote(key_word, encoding='utf-8')
 
     bili_search_url = f'https://searchwiki.biligame.com/mc/index.php?search={search_parm}'
-    fandom_search_url = f'https://minecraft.fandom.com/zh/index.php?search={search_parm}'
+    offical_search_url = f'https://zh.minecraft.wiki/?search={search_parm}'
 
     bili_url = f'https://wiki.biligame.com/mc/{search_parm}'
-    fandom_url = f'https://minecraft.fandom.com/zh/wiki/{search_parm}?variant=zh-cn'
+    offical_url = f'https://zh.minecraft.wiki/wiki/{search_parm}?variant=zh-cn'
 
     try:
         async with aiohttp_service.session.get(bili_url) as resp:
@@ -50,20 +50,20 @@ async def main(ctx: Context, keyword: RegexResult, aiohttp_service: AiohttpClien
                 f'Minecraft Wiki 没有名为【{key_word}】的页面，'
                 '要继续搜索请点击下面的链接：\n'
                 f'Bilibili 镜像: {bili_search_url}\n'
-                f'Fandom: {fandom_search_url}'
+                f'官方: {offical_search_url}'
             )
         case 200:
             tree = HTMLParser(text)
             title = tree.css_first('html head title').text()
             introduction_list = tree.css('p:has(~ .toc)')
             introduction = '\n'.join(_.text().strip() for _ in introduction_list)
-            msg = f'{title}\n\n{introduction}\n\nBilibili 镜像: {bili_url}\nFandom: {fandom_url}'
+            msg = f'{title}\n\n{introduction}\n\nBilibili 镜像: {bili_url}\n官方: {offical_url}'
         case _:
             msg = (
                 f'无法查询 Minecraft Wiki，错误代码：{status_code}\n'
                 f'要继续搜索【{key_word}】请点击下面的链接：\n'
                 f'Bilibili 镜像: {bili_search_url}\n'
-                f'Fandom: {fandom_search_url}'
+                f'官方: {offical_search_url}'
             )
 
     await ctx.scene.send_message(msg)

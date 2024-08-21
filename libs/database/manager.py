@@ -35,8 +35,7 @@ class DatabaseManager:
         driver: str = "aiosqlite",
         *,
         query: Mapping[str, Sequence[str] | str] = EMPTY_DICT,
-    ) -> URL:
-        ...
+    ) -> URL: ...
 
     @overload
     @classmethod
@@ -51,8 +50,7 @@ class DatabaseManager:
         username: str | None = None,
         passwd: str | None = None,
         query: Mapping[str, Sequence[str] | str] = EMPTY_DICT,
-    ) -> URL:
-        ...
+    ) -> URL: ...
 
     @classmethod
     def get_engine_url(

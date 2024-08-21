@@ -9,9 +9,9 @@ from dns.rdtypes.IN.SRV import SRV
 # # A 记录或 CNAME 记录
 async def dns_resolver(domain: str) -> Literal[False] | str:
     resolver = Resolver()
-    resolver.nameservers = ['119.29.29.29']
+    resolver.nameservers = ["119.29.29.29"]
     try:
-        resolve_result = await resolver.resolve(domain, 'A', tcp=True, lifetime=5)
+        resolve_result = await resolver.resolve(domain, "A", tcp=True, lifetime=5)
     except Exception:
         return False
     if resolve_result.rrset is None:
@@ -22,16 +22,16 @@ async def dns_resolver(domain: str) -> Literal[False] | str:
 
 async def dns_resolver_srv(domain: str) -> tuple[str, str] | tuple[Literal[False], Literal[False]]:
     resolver = Resolver()
-    resolver.nameservers = ['119.29.29.29']
+    resolver.nameservers = ["119.29.29.29"]
     try:
-        resolve_result = await resolver.resolve(f'_minecraft._tcp.{domain}', 'SRV', tcp=True, lifetime=5)
+        resolve_result = await resolver.resolve(f"_minecraft._tcp.{domain}", "SRV", tcp=True, lifetime=5)
     except Exception:
         return False, False
     if resolve_result.rrset is None:
         return False, False
     if resolve_result.rdtype == RdataType.SRV:
         results: list[SRV] = list(resolve_result.rrset)
-        host: str = results[0].target.to_text().strip('.')
+        host: str = results[0].target.to_text().strip(".")
         port: int = results[0].port
         return host, str(port)
     return False, False

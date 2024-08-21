@@ -100,7 +100,7 @@ async def main(ctx: Context, ping_target: RegexResult):
         await ctx.scene.send_message('连接被目标拒绝，该地址（及端口）可能不存在 Minecraft 服务器')
         logger.warning(f'连接被目标拒绝，该地址（及端口）可能不存在Minecraft服务器，目标地址：{ip}:{port}')
         return
-    except socket.timeout:
+    except TimeoutError:
         await ctx.scene.send_message('连接超时')
         logger.warning(f'连接超时，目标地址：{ip}:{port}')
         return
