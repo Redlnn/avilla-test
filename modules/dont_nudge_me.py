@@ -62,7 +62,7 @@ async def main(ctx: Context, event: ActivityTrigged):
     # bot = ctx.self
 
     basic_cfg = kayaku.create(BasicConfig, flush=True)
-    if target['member'] != str(basic_cfg.miraiApiHttp.account):
+    if target['member'] != str(basic_cfg.protocol.miraiApiHttp.account):
         return
     # elif not ManualInterval.require(f'{event.supplicant}_{event.target}', 3):
     #     return
