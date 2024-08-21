@@ -49,18 +49,19 @@ async def except_handle(event: ExceptionThrowed):
     account = avilla.get_account(Selector().land('qq')).account
     basic_cfg = kayaku.create(BasicConfig, flush=True)
 
-    await account.get_context(
-        Selector(
-            {
-                'land': 'qq',
-                'friend': str(basic_cfg.admin.masterId),
-            }
-        )
-    ).scene.send_message(message)
+    if basic_cfg.protocol.miraiApiHttp.enabled:
+        await account.get_context(
+            Selector(
+                {
+                    'land': 'qq',
+                    'friend': str(basic_cfg.admin.masterId),
+                }
+            )
+        ).scene.send_message(message)
 
-    # from avilla.standard.core.message import MessageSend
-    # await account.staff.call_fn(
-    #     MessageSend.send,
-    #     Selector().land('qq').friend(str(basic_cfg.admin.masterId)),
-    #     message,
-    # )
+        # from avilla.standard.core.message import MessageSend
+        # await account.staff.call_fn(
+        #     MessageSend.send,
+        #     Selector().land('qq').friend(str(basic_cfg.admin.masterId)),
+        #     message,
+        # )

@@ -192,7 +192,7 @@ def the_wondering_earth_counting_down(
         + EN_ROW_SPACE
     )
 
-    im = PILImage.new('RGBA', (width, height), f'{bg_color}00')
+    im = PILImage.new('RGBA', (int(width), int(height)), f'{bg_color}00')
     draw = ImageDraw.Draw(im, 'RGBA')
 
     draw.text((MARGIN_LEFT + box1[0], MARGIN_TOP + box1[1]), cn_1, font_color, cn_font)
@@ -251,7 +251,7 @@ def the_wondering_earth_counting_down(
         '#d03440',
     )
 
-    im_new = PILImage.new('RGBA', (width, height), f'{bg_color}ff')
+    im_new = PILImage.new('RGBA', (int(width), int(height)), f'{bg_color}ff')
     im_new.paste(im, (0, 0), mask=im.split()[3])
     im_new = im_new.filter(ImageFilter.GaussianBlur(5))
 
@@ -260,9 +260,9 @@ def the_wondering_earth_counting_down(
     #     color = im_new.getpixel((i, k))
     #     color = color[:-1] + (int(0.4 * color[-1]),)
     #     im_new.putpixel((i, k), color)
-    im_new = PILImage.blend(im_new, PILImage.new('RGBA', (width, height), f'{bg_color}00'), 0.33)
+    im_new = PILImage.blend(im_new, PILImage.new('RGBA', (int(width), int(height)), f'{bg_color}00'), 0.33)
 
-    im_result = PILImage.new('RGBA', (width, height), f'{bg_color}ff')
+    im_result = PILImage.new('RGBA', (int(width), int(height)), f'{bg_color}ff')
     im_result = PILImage.alpha_composite(im_result, im_new)
     im_result = PILImage.alpha_composite(im_result, im)
 
